@@ -1,0 +1,26 @@
+{
+    "name": "Vtrack - Gestion de véhicules",
+    "short_name": "Vtrack",
+    "description": "Application de gestion de clients, véhicules et SIM",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#2538A1",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/logovalerie.jpeg",
+            "sizes": "192x192",
+            "type": "image/jpeg",
+            "purpose": "any"
+        },
+        {
+            "src": "/logovalerie.jpeg",
+            "sizes": "512x512",
+            "type": "image/jpeg",
+            "purpose": "any"
+        }
+    ]
+}
+
