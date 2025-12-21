@@ -45,7 +45,6 @@
                             <thead>
                                 <tr>
                                     <th>Immatriculation</th>
-                                    <th>Marque/Modèle</th>
                                     <th>SIM</th>
                                     <th>Statut</th>
                                     <th>Action</th>
@@ -55,7 +54,6 @@
                                 @foreach($client->vehicules as $vehicule)
                                 <tr>
                                     <td><strong>{{ $vehicule->immatriculation ?? 'Non renseignée' }}</strong></td>
-                                    <td>{{ $vehicule->marque_modele ?? 'Non renseigné' }}</td>
                                     <td>{{ $vehicule->sim ? ($vehicule->sim->numero ?? 'N/A') : 'Aucune' }}</td>
                                     <td>
                                         @if($vehicule->statut == 'actif')

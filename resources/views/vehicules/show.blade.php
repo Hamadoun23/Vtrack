@@ -26,7 +26,6 @@
                 <i class="bi bi-info-circle"></i> Informations
             </div>
             <div class="card-body">
-                <p><strong>Marque/Modèle:</strong><br>{{ $vehicule->marque_modele ?? 'Non renseigné' }}</p>
                 <p><strong>Client:</strong><br>
                     @if($vehicule->client)
                         <a href="{{ route('clients.show', $vehicule->client->id_client) }}">
@@ -172,7 +171,7 @@
                                     <td>
                                         <form action="{{ route('interventions.destroy', [$vehicule->id_vehicule, $intervention->id_intervention]) }}" 
                                               method="POST" 
-                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette intervention ?')">
+                                              onsubmit="return confirmDelete(event, 'Êtes-vous sûr de vouloir supprimer cette intervention ?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger">

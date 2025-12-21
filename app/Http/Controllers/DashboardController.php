@@ -135,8 +135,8 @@ class DashboardController extends Controller
             $writeSection('SIMS', ['id_sim', 'iccid', 'last5', 'numero', 'operateur', 'statut', 'raison_blocage', 'created_at', 'updated_at'], $sims);
 
             // VEHICULES
-            $vehicules = Vehicule::select('id_vehicule', 'immatriculation', 'marque_modele', 'client_id', 'sim_id', 'statut', 'raison_suspension', 'created_at', 'updated_at')->get()->toArray();
-            $writeSection('VEHICULES', ['id_vehicule', 'immatriculation', 'marque_modele', 'client_id', 'sim_id', 'statut', 'raison_suspension', 'created_at', 'updated_at'], $vehicules);
+            $vehicules = Vehicule::select('id_vehicule', 'immatriculation', 'client_id', 'sim_id', 'statut', 'raison_suspension', 'created_at', 'updated_at')->get()->toArray();
+            $writeSection('VEHICULES', ['id_vehicule', 'immatriculation', 'client_id', 'sim_id', 'statut', 'raison_suspension', 'created_at', 'updated_at'], $vehicules);
 
             // INTERVENTIONS
             $interventions = Intervention::select('id_intervention', 'vehicule_id', 'description', 'date_intervention', 'created_at', 'updated_at')->get()->toArray();

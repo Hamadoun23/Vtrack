@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('vehicules', function (Blueprint $table) {
             $table->id('id_vehicule');
             $table->string('immatriculation')->unique();
-            $table->string('marque_modele')->nullable();
             $table->unsignedBigInteger('client_id')->nullable();
             $table->foreign('client_id')->references('id_client')->on('clients')->onDelete('cascade');
             $table->unsignedBigInteger('sim_id')->nullable()->unique();

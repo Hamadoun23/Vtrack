@@ -22,7 +22,6 @@
                     <thead>
                         <tr>
                             <th>Immatriculation</th>
-                            <th>Marque/Modèle</th>
                             <th>Client</th>
                             <th>SIM</th>
                             <th>Statut</th>
@@ -33,7 +32,6 @@
                         @foreach($vehicules as $vehicule)
                         <tr>
                             <td><strong>{{ $vehicule->immatriculation ?? 'Non renseignée' }}</strong></td>
-                            <td>{{ $vehicule->marque_modele ?? 'Non renseigné' }}</td>
                             <td>
                                 @if($vehicule->client)
                                     <a href="{{ route('clients.show', $vehicule->client->id_client) }}">
@@ -43,7 +41,15 @@
                                     <span class="text-muted">Aucun client</span>
                                 @endif
                             </td>
-                            <td>{{ $vehicule->sim ? ($vehicule->sim->numero ?? 'N/A') : 'Aucune' }}</td>
+                            <td>
+                                @if($vehicule->sim)
+                                    <a href="{{ route('sims.show', $vehicule->sim->id_sim) }}">
+                                        {{ $vehicule->sim->last5 ?? 'N/A' }}
+                                    </a>
+                                @else
+                                    <span class="text-muted">Aucune</span>
+                                @endif
+                            </td>
                             <td>
                                 @if($vehicule->statut == 'actif')
                                     <span class="badge bg-success">Actif</span>

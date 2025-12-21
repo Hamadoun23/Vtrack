@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
 
     // Interventions
     Route::post('/vehicules/{vehicule}/interventions', [InterventionController::class, 'store'])->name('interventions.store');
-    Route::delete('/interventions/{intervention}', [InterventionController::class, 'destroy'])->name('interventions.destroy');
+    Route::delete('/vehicules/{vehicule}/interventions/{intervention}', [InterventionController::class, 'destroy'])->name('interventions.destroy');
 
     // SIM
     Route::resource('sims', SimController::class);

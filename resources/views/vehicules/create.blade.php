@@ -22,16 +22,6 @@
                             @enderror
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="marque_modele" class="form-label">Marque/Modèle</label>
-                            <input type="text" class="form-control @error('marque_modele') is-invalid @enderror" 
-                                   name="marque_modele" id="marque_modele" value="{{ old('marque_modele') }}">
-                            @error('marque_modele')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
                             <label for="client_id" class="form-label">Client</label>
                             <select name="client_id" id="client_id" class="form-select @error('client_id') is-invalid @enderror">
                                 <option value="">Sélectionner un client</option>

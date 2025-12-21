@@ -47,12 +47,9 @@ class SearchController extends Controller
         }
 
         // ===== RECHERCHE DES VÉHICULES =====
-        // Recherche par immatriculation ou marque/modèle
+        // Recherche par immatriculation
         $vehicules = Vehicule::with(['client', 'sim'])
-            ->where(function($q) use ($query) {
-                $q->where('immatriculation', 'like', '%' . $query . '%')
-                  ->orWhere('marque_modele', 'like', '%' . $query . '%');
-            })
+            ->where('immatriculation', 'like', '%' . $query . '%')
             ->get();
 
         foreach ($vehicules as $vehicule) {
@@ -60,7 +57,7 @@ class SearchController extends Controller
                 'type' => 'véhicule',
                 'type_badge' => 'success',
                 'titre' => $vehicule->immatriculation,
-                'sous_titre' => $vehicule->marque_modele ?? 'Marque/Modèle non renseigné',
+                'sous_titre' => $vehicule->client->nom ?? 'Aucun client',
                 'info_supplementaire' => $vehicule->client->nom ?? 'Aucun client',
                 'client' => $vehicule->client->nom ?? 'N/A',
                 'sim' => $vehicule->sim->numero ?? ($vehicule->sim->last5 ?? 'Aucune'),

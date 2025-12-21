@@ -277,6 +277,25 @@
     <!-- Bootstrap 5.3 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Modal de confirmation personnalisée -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="confirmDeleteMessage">
+                    Êtes-vous sûr de vouloir supprimer cette intervention ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" id="confirmDeleteBtn">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Auto-hide alerts -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -288,6 +307,27 @@
                 }, 5000);
             });
         });
+
+        // Fonction de confirmation personnalisée
+        function confirmDelete(event, message) {
+            event.preventDefault();
+            const form = event.target.closest('form');
+            const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            const messageEl = document.getElementById('confirmDeleteMessage');
+            const confirmBtn = document.getElementById('confirmDeleteBtn');
+            
+            if (message) {
+                messageEl.textContent = message;
+            }
+            
+            confirmBtn.onclick = function() {
+                modal.hide();
+                form.submit();
+            };
+            
+            modal.show();
+            return false;
+        }
     </script>
 
     <!-- Service Worker Registration -->

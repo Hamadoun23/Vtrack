@@ -15,7 +15,6 @@ class Vehicule extends Model
 
     protected $fillable = [
         'immatriculation',
-        'marque_modele',
         'client_id',
         'sim_id',
         'statut',

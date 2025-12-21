@@ -33,9 +33,9 @@ class InterventionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($vehicule_id, $intervention_id)
+    public function destroy($vehicule, $intervention)
     {
-        $intervention = Intervention::findOrFail($intervention_id);
+        $intervention = Intervention::findOrFail($intervention);
         $vehicule_id = $intervention->vehicule_id;
         $intervention->delete();
 

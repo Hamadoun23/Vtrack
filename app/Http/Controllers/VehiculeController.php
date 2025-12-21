@@ -35,7 +35,6 @@ class VehiculeController extends Controller
     {
         $request->validate([
             'immatriculation' => 'required|string|max:255|unique:vehicules',
-            'marque_modele' => 'nullable|string|max:255',
             'client_id' => 'nullable|exists:clients,id_client',
             'sim_id' => 'nullable|exists:sims,id_sim',
             'statut' => 'required|in:actif,suspendu',
@@ -86,7 +85,6 @@ class VehiculeController extends Controller
     {
         $request->validate([
             'immatriculation' => 'required|string|max:255|unique:vehicules,immatriculation,' . $id . ',id_vehicule',
-            'marque_modele' => 'nullable|string|max:255',
             'client_id' => 'nullable|exists:clients,id_client',
             'sim_id' => 'nullable|exists:sims,id_sim',
             'statut' => 'required|in:actif,suspendu',

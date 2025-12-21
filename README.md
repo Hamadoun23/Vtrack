@@ -64,7 +64,7 @@ L'application est conçue comme une **Progressive Web App (PWA)**, ce qui permet
 ### 2. Gestion des Véhicules
 - ✅ CRUD complet (Create, Read, Update, Delete)
 - ✅ Champs obligatoires : immatriculation (unique), statut
-- ✅ Champs optionnels : marque/modèle, client associé
+- ✅ Champs optionnels : client associé
 - ✅ Association avec une carte SIM
 - ✅ Statuts : `actif` ou `suspendu`
 - ✅ Suspension/réactivation avec raison
@@ -281,7 +281,6 @@ bootstrap/cache/
 ### Table `vehicules`
 - `id_vehicule` (PK) : Identifiant unique
 - `immatriculation` : Plaque d'immatriculation (unique, obligatoire)
-- `marque_modele` : Marque et modèle (nullable)
 - `client_id` (FK) : Référence au client (nullable)
 - `sim_id` (FK) : Référence à la SIM (nullable, unique)
 - `statut` : `actif` ou `suspendu` (obligatoire)
@@ -436,7 +435,6 @@ GET  /search?q=terme → Recherche globale
 2. Remplissez :
    - Immatriculation (obligatoire, unique)
    - Statut (obligatoire)
-   - Marque/Modèle (optionnel)
    - Client (optionnel)
    - SIM (optionnel)
 3. Cliquez sur **Enregistrer**
@@ -658,7 +656,7 @@ npm run build
 
 ### Champs optionnels
 - **Clients** : `contact`, `note` sont optionnels
-- **Véhicules** : `marque_modele`, `client_id` sont optionnels
+- **Véhicules** : `client_id` est optionnel
 - **SIM** : `iccid`, `numero`, `operateur` sont optionnels
 
 ### Contraintes
@@ -719,4 +717,4 @@ Pour toute question ou problème, contactez l'équipe de développement.
 
 ---
 
-**Dernière mise à jour** : 19 Décembre 2025
+**Dernière mise à jour** : 21 Décembre 2025

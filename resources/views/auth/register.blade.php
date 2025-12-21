@@ -58,7 +58,7 @@
             <input type="password" 
                    class="form-control @error('password') is-invalid @enderror" 
                    id="password" 
-                   name="password" 
+                            name="password"
                    required 
                    autocomplete="new-password">
             @error('password')
