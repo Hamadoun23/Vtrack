@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('sims', function (Blueprint $table) {
             $table->id('id_sim');
             $table->string('iccid')->nullable()->unique();
-            $table->string('last5', 5);
-            $table->string('numero')->nullable();
+            $table->string('last5', 5)->unique();
+            $table->string('numero')->nullable()->unique();
             $table->string('operateur')->nullable();
             $table->enum('statut', ['active', 'inactive', 'bloquee'])->default('active');
             $table->text('raison_blocage')->nullable();

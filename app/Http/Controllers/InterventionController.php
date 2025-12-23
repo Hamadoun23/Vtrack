@@ -16,6 +16,10 @@ class InterventionController extends Controller
         $request->validate([
             'description' => 'required|string',
             'date_intervention' => 'required|date',
+        ], [
+            'description.required' => 'Le champ description est obligatoire.',
+            'date_intervention.required' => 'Le champ date d\'intervention est obligatoire.',
+            'date_intervention.date' => 'La date d\'intervention doit être une date valide.',
         ]);
 
         $vehicule = Vehicule::findOrFail($vehicule_id);

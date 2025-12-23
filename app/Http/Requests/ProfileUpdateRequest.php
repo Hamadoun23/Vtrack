@@ -20,4 +20,21 @@ class ProfileUpdateRequest extends FormRequest
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
         ];
     }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Le champ nom est obligatoire.',
+            'name.max' => 'Le nom ne doit pas dépasser 255 caractères.',
+            'email.required' => 'Le champ e-mail est obligatoire.',
+            'email.email' => 'L\'e-mail doit être une adresse e-mail valide.',
+            'email.unique' => 'Cet e-mail est déjà utilisé.',
+            'email.max' => 'L\'e-mail ne doit pas dépasser 255 caractères.',
+        ];
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sim;
 use Illuminate\Http\Request;
+use Illuminate\Database\UniqueConstraintViolationException;
 
 class SimController extends Controller
 {
@@ -31,17 +32,43 @@ class SimController extends Controller
     {
         $request->validate([
             'iccid' => 'nullable|string|max:255|unique:sims',
-            'last5' => 'required|string|max:5',
-            'numero' => 'nullable|string|max:255',
+            'last5' => 'required|string|max:5|unique:sims',
+            'numero' => 'nullable|string|max:255|unique:sims',
             'operateur' => 'nullable|string|max:255',
             'statut' => 'required|in:active,inactive,bloquee',
             'raison_blocage' => 'nullable|required_if:statut,bloquee|string',
+        ], [
+            'last5.required' => 'Le champ last5 est obligatoire.',
+            'last5.unique' => 'Le last5 est déjà utilisé.',
+            'last5.max' => 'Le last5 ne doit pas dépasser 5 caractères.',
+            'numero.unique' => 'Le numéro est déjà utilisé.',
+            'iccid.unique' => 'L\'ICCID est déjà utilisé.',
+            'statut.required' => 'Le champ statut est obligatoire.',
+            'statut.in' => 'Le statut sélectionné n\'est pas valide.',
+            'raison_blocage.required_if' => 'La raison de blocage est obligatoire lorsque le statut est "bloquée".',
         ]);
 
-        Sim::create($request->all());
+        try {
+            Sim::create($request->all());
 
-        return redirect()->route('sims.index')
-            ->with('success', 'SIM créée avec succès.');
+            return redirect()->route('sims.index')
+                ->with('success', 'SIM créée avec succès.');
+        } catch (UniqueConstraintViolationException $e) {
+            $errorMessage = $e->getMessage();
+            $message = 'Une erreur est survenue lors de la création de la SIM.';
+            
+            if (str_contains($errorMessage, 'sims_last5_unique') || str_contains($errorMessage, 'last5')) {
+                $message = 'Le last5 "' . $request->last5 . '" est déjà utilisé. Veuillez choisir un autre last5.';
+            } elseif (str_contains($errorMessage, 'sims_numero_unique') || str_contains($errorMessage, 'numero')) {
+                $message = 'Le numéro "' . $request->numero . '" est déjà utilisé. Veuillez choisir un autre numéro.';
+            } elseif (str_contains($errorMessage, 'sims_iccid_unique') || str_contains($errorMessage, 'iccid')) {
+                $message = 'L\'ICCID "' . $request->iccid . '" est déjà utilisé. Veuillez choisir un autre ICCID.';
+            }
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $message);
+        }
     }
 
     /**
@@ -69,18 +96,44 @@ class SimController extends Controller
     {
         $request->validate([
             'iccid' => 'nullable|string|max:255|unique:sims,iccid,' . $id . ',id_sim',
-            'last5' => 'required|string|max:5',
-            'numero' => 'nullable|string|max:255',
+            'last5' => 'required|string|max:5|unique:sims,last5,' . $id . ',id_sim',
+            'numero' => 'nullable|string|max:255|unique:sims,numero,' . $id . ',id_sim',
             'operateur' => 'nullable|string|max:255',
             'statut' => 'required|in:active,inactive,bloquee',
             'raison_blocage' => 'nullable|required_if:statut,bloquee|string',
+        ], [
+            'last5.required' => 'Le champ last5 est obligatoire.',
+            'last5.unique' => 'Le last5 est déjà utilisé.',
+            'last5.max' => 'Le last5 ne doit pas dépasser 5 caractères.',
+            'numero.unique' => 'Le numéro est déjà utilisé.',
+            'iccid.unique' => 'L\'ICCID est déjà utilisé.',
+            'statut.required' => 'Le champ statut est obligatoire.',
+            'statut.in' => 'Le statut sélectionné n\'est pas valide.',
+            'raison_blocage.required_if' => 'La raison de blocage est obligatoire lorsque le statut est "bloquée".',
         ]);
 
-        $sim = Sim::findOrFail($id);
-        $sim->update($request->all());
+        try {
+            $sim = Sim::findOrFail($id);
+            $sim->update($request->all());
 
-        return redirect()->route('sims.index')
-            ->with('success', 'SIM mise à jour avec succès.');
+            return redirect()->route('sims.index')
+                ->with('success', 'SIM mise à jour avec succès.');
+        } catch (UniqueConstraintViolationException $e) {
+            $errorMessage = $e->getMessage();
+            $message = 'Une erreur est survenue lors de la mise à jour de la SIM.';
+            
+            if (str_contains($errorMessage, 'sims_last5_unique') || str_contains($errorMessage, 'last5')) {
+                $message = 'Le last5 "' . $request->last5 . '" est déjà utilisé. Veuillez choisir un autre last5.';
+            } elseif (str_contains($errorMessage, 'sims_numero_unique') || str_contains($errorMessage, 'numero')) {
+                $message = 'Le numéro "' . $request->numero . '" est déjà utilisé. Veuillez choisir un autre numéro.';
+            } elseif (str_contains($errorMessage, 'sims_iccid_unique') || str_contains($errorMessage, 'iccid')) {
+                $message = 'L\'ICCID "' . $request->iccid . '" est déjà utilisé. Veuillez choisir un autre ICCID.';
+            }
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $message);
+        }
     }
 
     /**
@@ -109,6 +162,8 @@ class SimController extends Controller
     {
         $request->validate([
             'raison_blocage' => 'required|string',
+        ], [
+            'raison_blocage.required' => 'La raison de blocage est obligatoire.',
         ]);
 
         $sim = Sim::findOrFail($id);

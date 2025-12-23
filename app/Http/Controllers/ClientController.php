@@ -33,6 +33,9 @@ class ClientController extends Controller
             'nom' => 'required|string|max:255',
             'contact' => 'nullable|string|max:255',
             'note' => 'nullable|string',
+        ], [
+            'nom.required' => 'Le champ nom est obligatoire.',
+            'nom.max' => 'Le nom ne doit pas dépasser 255 caractères.',
         ]);
 
         Client::create($request->all());
@@ -68,6 +71,9 @@ class ClientController extends Controller
             'nom' => 'required|string|max:255',
             'contact' => 'nullable|string|max:255',
             'note' => 'nullable|string',
+        ], [
+            'nom.required' => 'Le champ nom est obligatoire.',
+            'nom.max' => 'Le nom ne doit pas dépasser 255 caractères.',
         ]);
 
         $client = Client::findOrFail($id);

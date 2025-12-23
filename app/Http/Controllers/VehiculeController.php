@@ -39,6 +39,14 @@ class VehiculeController extends Controller
             'sim_id' => 'nullable|exists:sims,id_sim',
             'statut' => 'required|in:actif,suspendu',
             'raison_suspension' => 'nullable|required_if:statut,suspendu|string',
+        ], [
+            'immatriculation.required' => 'Le champ immatriculation est obligatoire.',
+            'immatriculation.unique' => 'L\'immatriculation est déjà utilisée.',
+            'client_id.exists' => 'Le client sélectionné n\'existe pas.',
+            'sim_id.exists' => 'La SIM sélectionnée n\'existe pas.',
+            'statut.required' => 'Le champ statut est obligatoire.',
+            'statut.in' => 'Le statut sélectionné n\'est pas valide.',
+            'raison_suspension.required_if' => 'La raison de suspension est obligatoire lorsque le statut est "suspendu".',
         ]);
 
         Vehicule::create($request->all());
@@ -89,6 +97,14 @@ class VehiculeController extends Controller
             'sim_id' => 'nullable|exists:sims,id_sim',
             'statut' => 'required|in:actif,suspendu',
             'raison_suspension' => 'nullable|required_if:statut,suspendu|string',
+        ], [
+            'immatriculation.required' => 'Le champ immatriculation est obligatoire.',
+            'immatriculation.unique' => 'L\'immatriculation est déjà utilisée.',
+            'client_id.exists' => 'Le client sélectionné n\'existe pas.',
+            'sim_id.exists' => 'La SIM sélectionnée n\'existe pas.',
+            'statut.required' => 'Le champ statut est obligatoire.',
+            'statut.in' => 'Le statut sélectionné n\'est pas valide.',
+            'raison_suspension.required_if' => 'La raison de suspension est obligatoire lorsque le statut est "suspendu".',
         ]);
 
         $vehicule = Vehicule::findOrFail($id);
@@ -117,6 +133,8 @@ class VehiculeController extends Controller
     {
         $request->validate([
             'raison_suspension' => 'required|string',
+        ], [
+            'raison_suspension.required' => 'La raison de suspension est obligatoire.',
         ]);
 
         $vehicule = Vehicule::findOrFail($id);
@@ -151,6 +169,9 @@ class VehiculeController extends Controller
     {
         $request->validate([
             'nouvelle_sim_id' => 'required|exists:sims,id_sim',
+        ], [
+            'nouvelle_sim_id.required' => 'La nouvelle SIM est obligatoire.',
+            'nouvelle_sim_id.exists' => 'La SIM sélectionnée n\'existe pas.',
         ]);
 
         $vehicule = Vehicule::findOrFail($id);
