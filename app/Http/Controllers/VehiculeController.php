@@ -49,10 +49,22 @@ class VehiculeController extends Controller
             'raison_suspension.required_if' => 'La raison de suspension est obligatoire lorsque le statut est "suspendu".',
         ]);
 
-        Vehicule::create($request->all());
+        try {
+            Vehicule::create([
+                'immatriculation' => $request->immatriculation,
+                'client_id' => $request->client_id ?: null,
+                'sim_id' => $request->sim_id ?: null,
+                'statut' => $request->statut,
+                'raison_suspension' => $request->raison_suspension ?: null,
+            ]);
 
-        return redirect()->route('vehicules.index')
-            ->with('success', 'Véhicule créé avec succès.');
+            return redirect()->route('vehicules.index')
+                ->with('success', 'Véhicule créé avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la création du véhicule : ' . $e->getMessage());
+        }
     }
 
     /**
@@ -107,11 +119,23 @@ class VehiculeController extends Controller
             'raison_suspension.required_if' => 'La raison de suspension est obligatoire lorsque le statut est "suspendu".',
         ]);
 
-        $vehicule = Vehicule::findOrFail($id);
-        $vehicule->update($request->all());
+        try {
+            $vehicule = Vehicule::findOrFail($id);
+            $vehicule->update([
+                'immatriculation' => $request->immatriculation,
+                'client_id' => $request->client_id ?: null,
+                'sim_id' => $request->sim_id ?: null,
+                'statut' => $request->statut,
+                'raison_suspension' => $request->raison_suspension ?: null,
+            ]);
 
-        return redirect()->route('vehicules.index')
-            ->with('success', 'Véhicule mis à jour avec succès.');
+            return redirect()->route('vehicules.index')
+                ->with('success', 'Véhicule mis à jour avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la mise à jour du véhicule : ' . $e->getMessage());
+        }
     }
 
     /**
@@ -119,11 +143,23 @@ class VehiculeController extends Controller
      */
     public function destroy(string $id)
     {
-        $vehicule = Vehicule::findOrFail($id);
-        $vehicule->delete();
+        try {
+            $vehicule = Vehicule::findOrFail($id);
+            
+            // Vérifier si le véhicule a des interventions
+            if ($vehicule->interventions()->count() > 0) {
+                return redirect()->back()
+                    ->with('error', 'Impossible de supprimer un véhicule ayant des interventions. Supprimez d\'abord les interventions.');
+            }
+            
+            $vehicule->delete();
 
-        return redirect()->route('vehicules.index')
-            ->with('success', 'Véhicule supprimé avec succès.');
+            return redirect()->route('vehicules.index')
+                ->with('success', 'Véhicule supprimé avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Une erreur est survenue lors de la suppression du véhicule : ' . $e->getMessage());
+        }
     }
 
     /**
@@ -137,14 +173,19 @@ class VehiculeController extends Controller
             'raison_suspension.required' => 'La raison de suspension est obligatoire.',
         ]);
 
-        $vehicule = Vehicule::findOrFail($id);
-        $vehicule->update([
-            'statut' => 'suspendu',
-            'raison_suspension' => $request->raison_suspension,
-        ]);
+        try {
+            $vehicule = Vehicule::findOrFail($id);
+            $vehicule->update([
+                'statut' => 'suspendu',
+                'raison_suspension' => $request->raison_suspension,
+            ]);
 
-        return redirect()->back()
-            ->with('success', 'Véhicule suspendu avec succès.');
+            return redirect()->back()
+                ->with('success', 'Véhicule suspendu avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Une erreur est survenue lors de la suspension du véhicule : ' . $e->getMessage());
+        }
     }
 
     /**
@@ -152,14 +193,19 @@ class VehiculeController extends Controller
      */
     public function reactiver(string $id)
     {
-        $vehicule = Vehicule::findOrFail($id);
-        $vehicule->update([
-            'statut' => 'actif',
-            'raison_suspension' => null,
-        ]);
+        try {
+            $vehicule = Vehicule::findOrFail($id);
+            $vehicule->update([
+                'statut' => 'actif',
+                'raison_suspension' => null,
+            ]);
 
-        return redirect()->back()
-            ->with('success', 'Véhicule réactivé avec succès.');
+            return redirect()->back()
+                ->with('success', 'Véhicule réactivé avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Une erreur est survenue lors de la réactivation du véhicule : ' . $e->getMessage());
+        }
     }
 
     /**
@@ -174,23 +220,38 @@ class VehiculeController extends Controller
             'nouvelle_sim_id.exists' => 'La SIM sélectionnée n\'existe pas.',
         ]);
 
-        $vehicule = Vehicule::findOrFail($id);
-        
-        // Mettre l'ancienne SIM inactive si elle existe
-        if ($vehicule->sim_id) {
-            $ancienneSim = Sim::find($vehicule->sim_id);
-            if ($ancienneSim) {
-                $ancienneSim->update(['statut' => 'inactive']);
+        try {
+            $vehicule = Vehicule::findOrFail($id);
+            
+            // Vérifier si la nouvelle SIM est déjà utilisée par un autre véhicule
+            $simUtilisee = Vehicule::where('sim_id', $request->nouvelle_sim_id)
+                ->where('id_vehicule', '!=', $id)
+                ->first();
+            
+            if ($simUtilisee) {
+                return redirect()->back()
+                    ->with('error', 'Cette SIM est déjà utilisée par un autre véhicule.');
             }
+            
+            // Mettre l'ancienne SIM inactive si elle existe
+            if ($vehicule->sim_id) {
+                $ancienneSim = Sim::find($vehicule->sim_id);
+                if ($ancienneSim) {
+                    $ancienneSim->update(['statut' => 'inactive']);
+                }
+            }
+
+            // Assigner la nouvelle SIM
+            $nouvelleSim = Sim::findOrFail($request->nouvelle_sim_id);
+            $nouvelleSim->update(['statut' => 'active']);
+            
+            $vehicule->update(['sim_id' => $request->nouvelle_sim_id]);
+
+            return redirect()->back()
+                ->with('success', 'SIM remplacée avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Une erreur est survenue lors du remplacement de la SIM : ' . $e->getMessage());
         }
-
-        // Assigner la nouvelle SIM
-        $nouvelleSim = Sim::findOrFail($request->nouvelle_sim_id);
-        $nouvelleSim->update(['statut' => 'active']);
-        
-        $vehicule->update(['sim_id' => $request->nouvelle_sim_id]);
-
-        return redirect()->back()
-            ->with('success', 'SIM remplacée avec succès.');
     }
 }

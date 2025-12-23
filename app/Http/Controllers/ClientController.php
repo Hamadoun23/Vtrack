@@ -38,10 +38,20 @@ class ClientController extends Controller
             'nom.max' => 'Le nom ne doit pas dépasser 255 caractères.',
         ]);
 
-        Client::create($request->all());
+        try {
+            Client::create([
+                'nom' => $request->nom,
+                'contact' => $request->contact ?: null,
+                'note' => $request->note ?: null,
+            ]);
 
-        return redirect()->route('clients.index')
-            ->with('success', 'Client créé avec succès.');
+            return redirect()->route('clients.index')
+                ->with('success', 'Client créé avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la création du client : ' . $e->getMessage());
+        }
     }
 
     /**
@@ -76,11 +86,21 @@ class ClientController extends Controller
             'nom.max' => 'Le nom ne doit pas dépasser 255 caractères.',
         ]);
 
-        $client = Client::findOrFail($id);
-        $client->update($request->all());
+        try {
+            $client = Client::findOrFail($id);
+            $client->update([
+                'nom' => $request->nom,
+                'contact' => $request->contact ?: null,
+                'note' => $request->note ?: null,
+            ]);
 
-        return redirect()->route('clients.index')
-            ->with('success', 'Client mis à jour avec succès.');
+            return redirect()->route('clients.index')
+                ->with('success', 'Client mis à jour avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la mise à jour du client : ' . $e->getMessage());
+        }
     }
 
     /**
@@ -88,10 +108,22 @@ class ClientController extends Controller
      */
     public function destroy(string $id)
     {
-        $client = Client::findOrFail($id);
-        $client->delete();
+        try {
+            $client = Client::findOrFail($id);
+            
+            // Vérifier si le client a des véhicules
+            if ($client->vehicules()->count() > 0) {
+                return redirect()->back()
+                    ->with('error', 'Impossible de supprimer un client ayant des véhicules. Supprimez d\'abord les véhicules associés.');
+            }
+            
+            $client->delete();
 
-        return redirect()->route('clients.index')
-            ->with('success', 'Client supprimé avec succès.');
+            return redirect()->route('clients.index')
+                ->with('success', 'Client supprimé avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Une erreur est survenue lors de la suppression du client : ' . $e->getMessage());
+        }
     }
 }

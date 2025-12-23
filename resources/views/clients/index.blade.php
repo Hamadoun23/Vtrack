@@ -31,7 +31,7 @@
                         @foreach($clients as $client)
                         <tr>
                             <td><strong>{{ $client->nom }}</strong></td>
-                            <td>{{ $client->contact }}</td>
+                            <td>{{ $client->contact ?? 'Non renseigné' }}</td>
                             <td>
                                 <span class="badge bg-info">{{ $client->vehicules->count() }}</span>
                             </td>

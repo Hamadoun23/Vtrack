@@ -22,16 +22,22 @@ class InterventionController extends Controller
             'date_intervention.date' => 'La date d\'intervention doit être une date valide.',
         ]);
 
-        $vehicule = Vehicule::findOrFail($vehicule_id);
-        
-        Intervention::create([
-            'vehicule_id' => $vehicule->id_vehicule,
-            'description' => $request->description,
-            'date_intervention' => $request->date_intervention,
-        ]);
+        try {
+            $vehicule = Vehicule::findOrFail($vehicule_id);
+            
+            Intervention::create([
+                'vehicule_id' => $vehicule->id_vehicule,
+                'description' => $request->description,
+                'date_intervention' => $request->date_intervention,
+            ]);
 
-        return redirect()->route('vehicules.show', $vehicule->id_vehicule)
-            ->with('success', 'Intervention ajoutée avec succès.');
+            return redirect()->route('vehicules.show', $vehicule->id_vehicule)
+                ->with('success', 'Intervention ajoutée avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de l\'ajout de l\'intervention : ' . $e->getMessage());
+        }
     }
 
     /**
@@ -39,11 +45,16 @@ class InterventionController extends Controller
      */
     public function destroy($vehicule, $intervention)
     {
-        $intervention = Intervention::findOrFail($intervention);
-        $vehicule_id = $intervention->vehicule_id;
-        $intervention->delete();
+        try {
+            $intervention = Intervention::findOrFail($intervention);
+            $vehicule_id = $intervention->vehicule_id;
+            $intervention->delete();
 
-        return redirect()->route('vehicules.show', $vehicule_id)
-            ->with('success', 'Intervention supprimée avec succès.');
+            return redirect()->route('vehicules.show', $vehicule_id)
+                ->with('success', 'Intervention supprimée avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Une erreur est survenue lors de la suppression de l\'intervention : ' . $e->getMessage());
+        }
     }
 }

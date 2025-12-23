@@ -166,14 +166,19 @@ class SimController extends Controller
             'raison_blocage.required' => 'La raison de blocage est obligatoire.',
         ]);
 
-        $sim = Sim::findOrFail($id);
-        $sim->update([
-            'statut' => 'bloquee',
-            'raison_blocage' => $request->raison_blocage,
-        ]);
+        try {
+            $sim = Sim::findOrFail($id);
+            $sim->update([
+                'statut' => 'bloquee',
+                'raison_blocage' => $request->raison_blocage,
+            ]);
 
-        return redirect()->back()
-            ->with('success', 'SIM bloquée avec succès.');
+            return redirect()->back()
+                ->with('success', 'SIM bloquée avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Une erreur est survenue lors du blocage de la SIM : ' . $e->getMessage());
+        }
     }
 
     /**
@@ -181,13 +186,18 @@ class SimController extends Controller
      */
     public function debloquer(string $id)
     {
-        $sim = Sim::findOrFail($id);
-        $sim->update([
-            'statut' => 'active',
-            'raison_blocage' => null,
-        ]);
+        try {
+            $sim = Sim::findOrFail($id);
+            $sim->update([
+                'statut' => 'active',
+                'raison_blocage' => null,
+            ]);
 
-        return redirect()->back()
-            ->with('success', 'SIM débloquée avec succès.');
+            return redirect()->back()
+                ->with('success', 'SIM débloquée avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Une erreur est survenue lors du déblocage de la SIM : ' . $e->getMessage());
+        }
     }
 }

@@ -26,7 +26,7 @@
                 <i class="bi bi-info-circle"></i> Informations
             </div>
             <div class="card-body">
-                <p><strong>Contact:</strong><br>{{ $client->contact }}</p>
+                <p><strong>Contact:</strong><br>{{ $client->contact ?? 'Non renseigné' }}</p>
                 @if($client->note)
                     <p><strong>Note:</strong><br>{{ $client->note }}</p>
                 @endif
